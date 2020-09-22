@@ -144,13 +144,27 @@ void DrawOneCar( float bodyColor[3] )
 
 
 
-    glColor3fv(tyreColor);
-
+    glColor3fv(tyreColor); // sets the colour of the tires
     //****************************
     // WRITE YOUR CODE HERE.
     //
     // Draw the four tyres.
     //****************************
+    double innerRadus = CAR_HEIGHT * 0.15;
+    double outerRadius = CAR_HEIGHT * 0.25;
+
+
+    glPushMatrix();
+        glTranslated(CAR_WIDTH * .5, CAR_LENGTH* .5, outerRadius * .5);
+        glRotated(90, 1, 0, 0);
+        glutSolidTorus(innerRadus, outerRadius, 30, 30);
+    glPopMatrix();
+
+
+
+    
+
+
 
 }
 
