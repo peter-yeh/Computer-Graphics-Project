@@ -135,9 +135,10 @@ void DrawOneCar( float bodyColor[3] )
     // Draw the car body.
     //****************************
     glPushMatrix();
-        glTranslated(0, 0, 0); // todo fix this if there's error
-        glScaled(CAR_LENGTH, CAR_WIDTH, 2 * CAR_HEIGHT);
-        glutSolidCube(1);                 // first to apply to the vertex
+        // x is the length of car, y is the width, z is the height.
+        // Set to 2 * CAR_HEIGHT so the car does not look so flat.
+        glScaled(CAR_LENGTH, CAR_WIDTH, 2 * CAR_HEIGHT); 
+        glutSolidCube(1);
     glPopMatrix();
     
 
@@ -152,6 +153,8 @@ void DrawOneCar( float bodyColor[3] )
 
     // front right
     glPushMatrix();
+        // CAR_LENGTH * 0.5 because the center of the car is 0,0
+        // moving to CAR_LENGHT * 0.5 is to translate it to the front right of the car.
         glTranslated(CAR_LENGTH * .5, CAR_WIDTH* .5, outerRadius * .5);
         glRotated(90, 1, 0, 0);
         glutSolidTorus(innerRadus, outerRadius, 30, 30);
@@ -258,7 +261,11 @@ void MyDisplay( void )
     // the predefined constant CLIP_PLANE_DIST to position your near and 
     // far planes.
     //***********************************************************************
-    gluPerspective( VERT_FOV, (double)winWidth / winHeight, 50.0, 600.0 );
+    // sets up the symmetric view volume
+    gluPerspective( VERT_FOV,
+        (double)winWidth / winHeight, 
+        eyeDistance - CLIP_PLANE_DIST, 
+        eyeDistance + CLIP_PLANE_DIST);
 
 
     glMatrixMode( GL_MODELVIEW );
@@ -270,6 +277,9 @@ void MyDisplay( void )
     // You may use the gluLookAt() function, but you can use other method.
     //***********************************************************************
     gluLookAt( 0.0, 0.0, eyeDistance, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
+    // rotate it // -----------------------------------------------------------------------------
+    glRotated(eyeLatitude, 1.0, 0.0, 0.0);
+    glRotated(-eyeLongitude, 0.0, 1.0, 0.0);
 
 
     // Set world positions of the two lights.
