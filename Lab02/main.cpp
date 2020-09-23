@@ -289,8 +289,9 @@ void MyDisplay( void )
     // You may use the gluLookAt() function, but you can use other method.
     //***********************************************************************
     gluLookAt( 0.0, 0.0, eyeDistance, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
-    // rotate it // ----------------------------------------------------------UNSERSTAND TTHIS PART OF THE CODE--------------
+    // rotate in positive eyeLat first
     glRotated(eyeLatitude, 1.0, 0.0, 0.0);
+    // rotate in negative eyeLong
     glRotated(-eyeLongitude, 0.0, 1.0, 0.0);
 
 
