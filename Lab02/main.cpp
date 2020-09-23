@@ -138,22 +138,32 @@ void DrawOneCar( float bodyColor[3] )
     //
     // Draw the car body.
     //****************************
+
+    // draw the base of the car 
     glPushMatrix();
         // x is the length of car, y is the width, z is the height.
         // Set to 2 * CAR_HEIGHT so the car does not look so flat.
-        glScaled(CAR_LENGTH, CAR_WIDTH, 2 * CAR_HEIGHT); 
+        glScaled(CAR_LENGTH, CAR_WIDTH, CAR_HEIGHT); 
         glutSolidCube(1);
     glPopMatrix();
     
+    // draw the top half of the car
+    glPushMatrix();
+        glTranslated(0, 0, .5 * CAR_HEIGHT);
+        glScaled(0.5 * CAR_LENGTH, CAR_WIDTH, .75 * CAR_HEIGHT);
+        glutSolidCube(1);
+    glPopMatrix();
 
-    glColor3fv(tyreColor); // sets the colour of the tires
+
+    // sets the colour of the tires
+    glColor3fv(tyreColor);
     //****************************
     // WRITE YOUR CODE HERE.
     //
     // Draw the four tyres.
     //****************************
 
-    // front right
+    // front right tire
     glPushMatrix();
         // CAR_LENGTH * 0.5 because the center of the car is 0,0
         // moving to CAR_LENGHT * 0.5 is to translate it to the front right of the car.
@@ -162,21 +172,21 @@ void DrawOneCar( float bodyColor[3] )
         glutSolidTorus(INNER_TIRE_RADIUS, OUTER_TIRE_RADIUS, 30, 30);
     glPopMatrix();
 
-    // front left
+    // front left tire
     glPushMatrix();
         glTranslated(CAR_LENGTH * .5, -CAR_WIDTH * .5, OUTER_TIRE_RADIUS * .5);
         glRotated(90, 1, 0, 0);
         glutSolidTorus(INNER_TIRE_RADIUS, OUTER_TIRE_RADIUS, 30, 30);
     glPopMatrix();    
     
-    // rear right
+    // rear right tire
     glPushMatrix();
         glTranslated(-CAR_LENGTH * .5, CAR_WIDTH * .5, OUTER_TIRE_RADIUS * .5);
         glRotated(90, 1, 0, 0);
         glutSolidTorus(INNER_TIRE_RADIUS, OUTER_TIRE_RADIUS, 30, 30);
     glPopMatrix();    
     
-    // rear left
+    // rear left tire
     glPushMatrix();
         glTranslated(-CAR_LENGTH * .5, -CAR_WIDTH * .5, OUTER_TIRE_RADIUS * .5);
         glRotated(90, 1, 0, 0);
