@@ -141,9 +141,6 @@ void DrawOneCar( float bodyColor[3] )
     glPopMatrix();
     
 
-
-
-
     glColor3fv(tyreColor); // sets the colour of the tires
     //****************************
     // WRITE YOUR CODE HERE.
@@ -153,14 +150,33 @@ void DrawOneCar( float bodyColor[3] )
     double innerRadus = CAR_HEIGHT * 0.15;
     double outerRadius = CAR_HEIGHT * 0.25;
 
-
+    // front right
     glPushMatrix();
-        glTranslated(CAR_WIDTH * .5, CAR_LENGTH* .5, outerRadius * .5);
+        glTranslated(CAR_LENGTH * .5, CAR_WIDTH* .5, outerRadius * .5);
         glRotated(90, 1, 0, 0);
         glutSolidTorus(innerRadus, outerRadius, 30, 30);
     glPopMatrix();
 
-
+    // front left
+    glPushMatrix();
+        glTranslated(CAR_LENGTH * .5, -CAR_WIDTH * .5, outerRadius * .5);
+        glRotated(90, 1, 0, 0);
+        glutSolidTorus(innerRadus, outerRadius, 30, 30);
+    glPopMatrix();    
+    
+    // rear right
+    glPushMatrix();
+        glTranslated(-CAR_LENGTH * .5, CAR_WIDTH * .5, outerRadius * .5);
+        glRotated(90, 1, 0, 0);
+        glutSolidTorus(innerRadus, outerRadius, 30, 30);
+    glPopMatrix();    
+    
+    // rear left
+    glPushMatrix();
+        glTranslated(-CAR_LENGTH * .5, -CAR_WIDTH * .5, outerRadius * .5);
+        glRotated(90, 1, 0, 0);
+        glutSolidTorus(innerRadus, outerRadius, 30, 30);
+    glPopMatrix();
 
     
 
