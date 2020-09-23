@@ -135,8 +135,8 @@ void DrawOneCar( float bodyColor[3] )
     // Draw the car body.
     //****************************
     glPushMatrix();
-        glTranslated(0, 0, CAR_HEIGHT); // todo fix this if there's error
-        glScaled(CAR_LENGTH, CAR_WIDTH, CAR_HEIGHT);
+        glTranslated(0, 0, 0); // todo fix this if there's error
+        glScaled(CAR_LENGTH, CAR_WIDTH, 2 * CAR_HEIGHT);
         glutSolidCube(1);                 // first to apply to the vertex
     glPopMatrix();
     
@@ -178,10 +178,7 @@ void DrawOneCar( float bodyColor[3] )
         glutSolidTorus(innerRadus, outerRadius, 30, 30);
     glPopMatrix();
 
-    
-
-
-
+   
 }
 
 
