@@ -277,7 +277,7 @@ void MyDisplay( void )
     // You may use the gluLookAt() function, but you can use other method.
     //***********************************************************************
     gluLookAt( 0.0, 0.0, eyeDistance, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
-    // rotate it // -----------------------------------------------------------------------------
+    // rotate it // ----------------------------------------------------------UNSERSTAND TTHIS PART OF THE CODE--------------
     glRotated(eyeLatitude, 1.0, 0.0, 0.0);
     glRotated(-eyeLongitude, 0.0, 1.0, 0.0);
 
@@ -357,6 +357,8 @@ void MyTimer( int v )
         //****************************
         // WRITE YOUR CODE HERE.
         //****************************
+        UpdateCars();
+        glutTimerFunc(1000 / DESIRED_FPS, MyTimer, v);
     }
 }
 
