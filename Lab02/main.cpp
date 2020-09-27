@@ -277,6 +277,7 @@ void MyDisplay( void )
     // far planes.
     //***********************************************************************
     // sets up the symmetric view volume
+    // field of view, aspect ratio, near, far
     gluPerspective( VERT_FOV,
         (double)winWidth / winHeight, 
         eyeDistance - CLIP_PLANE_DIST, 
