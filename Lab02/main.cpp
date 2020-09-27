@@ -38,8 +38,8 @@
 
 #define CAR_TOP_DIST        (PLANET_RADIUS + CAR_HEIGHT)  // Distance of the top of a car from planet's center.
 
-#define INNER_TIRE_RADIUS CAR_HEIGHT * 0.15
-#define OUTER_TIRE_RADIUS CAR_HEIGHT * 0.25
+#define INNER_TIRE_RADIUS CAR_HEIGHT * 0.1
+#define OUTER_TIRE_RADIUS CAR_HEIGHT * 0.2
 
 
 #define EYE_INIT_DIST       (3.0 * CAR_TOP_DIST)  // Initial distance of eye from planet's center.
@@ -141,16 +141,16 @@ void DrawOneCar( float bodyColor[3] )
 
     // draw the base of the car 
     glPushMatrix();
+        glTranslated(0, 0, 0.5 * CAR_HEIGHT);
         // x is the length of car, y is the width, z is the height.
-        // Set to 2 * CAR_HEIGHT so the car does not look so flat.
-        glScaled(CAR_LENGTH, CAR_WIDTH, CAR_HEIGHT); 
+        glScaled(CAR_LENGTH, CAR_WIDTH, 0.55 * CAR_HEIGHT); 
         glutSolidCube(1);
     glPopMatrix();
     
     // draw the top half of the car
     glPushMatrix();
-        glTranslated(0, 0, .5 * CAR_HEIGHT);
-        glScaled(0.5 * CAR_LENGTH, CAR_WIDTH, .75 * CAR_HEIGHT);
+        glTranslated(0, 0, CAR_HEIGHT);
+        glScaled(0.5 * CAR_LENGTH, CAR_WIDTH, 0.45 * CAR_HEIGHT);
         glutSolidCube(1);
     glPopMatrix();
 
@@ -163,37 +163,34 @@ void DrawOneCar( float bodyColor[3] )
     // Draw the four tyres.
     //****************************
 
-    // As use of hard coded value isn't allowed, I couldn't find a good algo to set the wheels
-    // which could scale properly as the car size changes, hence this is the best alternative
-    // it allows the wheels to be in the same location as the car's size changes.
-    // front right tire
-    glPushMatrix();
-        // CAR_LENGTH * 0.5 because the center of the car is 0,0
-        // moving to CAR_LENGHT * 0.5 is to translate it to the front right of the car.
-        glTranslated(CAR_LENGTH * .5, CAR_WIDTH* .5, OUTER_TIRE_RADIUS * .5);
-        glRotated(90, 1, 0, 0);
-        glutSolidTorus(INNER_TIRE_RADIUS, OUTER_TIRE_RADIUS, 30, 30);
-    glPopMatrix();
-
     // front left tire
     glPushMatrix();
-        glTranslated(CAR_LENGTH * .5, -CAR_WIDTH * .5, OUTER_TIRE_RADIUS * .5);
+        glTranslated(CAR_LENGTH * 0.35, CAR_WIDTH * 0.59, OUTER_TIRE_RADIUS );
+        // rotate from lie flat to vertical
         glRotated(90, 1, 0, 0);
-        glutSolidTorus(INNER_TIRE_RADIUS, OUTER_TIRE_RADIUS, 30, 30);
-    glPopMatrix();    
+        // tire is not rounder going pass 20 for sides and rings
+        glutSolidTorus(INNER_TIRE_RADIUS, OUTER_TIRE_RADIUS, 20, 20);
+    glPopMatrix();
+
+    // front right tire
+    glPushMatrix();
+        glTranslated(CAR_LENGTH * 0.35, -CAR_WIDTH * 0.59, OUTER_TIRE_RADIUS);
+        glRotated(90, 1, 0, 0);
+        glutSolidTorus(INNER_TIRE_RADIUS, OUTER_TIRE_RADIUS, 20, 20);
+    glPopMatrix();
     
     // rear right tire
     glPushMatrix();
-        glTranslated(-CAR_LENGTH * .5, CAR_WIDTH * .5, OUTER_TIRE_RADIUS * .5);
+        glTranslated(-CAR_LENGTH * 0.35, -CAR_WIDTH * 0.59, OUTER_TIRE_RADIUS);
         glRotated(90, 1, 0, 0);
-        glutSolidTorus(INNER_TIRE_RADIUS, OUTER_TIRE_RADIUS, 30, 30);
-    glPopMatrix();    
+        glutSolidTorus(INNER_TIRE_RADIUS, OUTER_TIRE_RADIUS, 20, 20);
+    glPopMatrix();
     
     // rear left tire
     glPushMatrix();
-        glTranslated(-CAR_LENGTH * .5, -CAR_WIDTH * .5, OUTER_TIRE_RADIUS * .5);
+        glTranslated(-CAR_LENGTH * 0.35, CAR_WIDTH * 0.59, OUTER_TIRE_RADIUS);
         glRotated(90, 1, 0, 0);
-        glutSolidTorus(INNER_TIRE_RADIUS, OUTER_TIRE_RADIUS, 30, 30);
+        glutSolidTorus(INNER_TIRE_RADIUS, OUTER_TIRE_RADIUS, 20, 20);
     glPopMatrix();
 
    
