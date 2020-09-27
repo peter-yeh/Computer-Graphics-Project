@@ -1,13 +1,3 @@
-//============================================================
-// STUDENT NAME: 
-// STUDENT NO.: 
-// NUS EMAIL ADDRESS: 
-// COMMENTS TO GRADER: 
-// 
-// ============================================================
-
-// todo add this before submitting 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
