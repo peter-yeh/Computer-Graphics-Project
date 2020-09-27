@@ -163,6 +163,9 @@ void DrawOneCar( float bodyColor[3] )
     // Draw the four tyres.
     //****************************
 
+    // As use of hard coded value isn't allowed, I couldn't find a good algo to set the wheels
+    // which could scale properly as the car size changes, hence this is the best alternative
+    // it allows the wheels to be in the same location as the car's size changes.
     // front right tire
     glPushMatrix();
         // CAR_LENGTH * 0.5 because the center of the car is 0,0
@@ -289,9 +292,9 @@ void MyDisplay( void )
     // You may use the gluLookAt() function, but you can use other method.
     //***********************************************************************
     gluLookAt( 0.0, 0.0, eyeDistance, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
-    // rotate in positive eyeLat first
+    // rotate eyeLatitude degrees along the x-axis
     glRotated(eyeLatitude, 1.0, 0.0, 0.0);
-    // rotate in negative eyeLong
+    // rotate -eyeLongitude degrees along the y-axis
     glRotated(-eyeLongitude, 0.0, 1.0, 0.0);
 
 
