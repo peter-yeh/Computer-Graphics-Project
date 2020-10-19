@@ -165,6 +165,33 @@ void MakeReflectionImage(void)
 	// WRITE YOUR CODE HERE.
 	//****************************
 
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustum(TABLETOP_Y1 - eyePos[1], TABLETOP_Y2 - eyePos[1],
+		TABLETOP_X1 - eyePos[0], TABLETOP_X2 - eyePos[0],
+		eyePos[2] - TABLETOP_Z, eyeDistance + SCENE_RADIUS);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(eyePos[0], eyePos[1], 2 * TABLETOP_Z - eyePos[2],
+		eyePos[0], eyePos[1], eyePos[2],
+		1, 0, 0);
+
+	glLightfv(GL_LIGHT0, GL_POSITION, light0Position);
+	glLightfv(GL_LIGHT1, GL_POSITION, light1Position);
+
+	DrawRoom();
+	DrawTeapot();
+	DrawSphere();
+
+	glReadBuffer(GL_BACK);
+	glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
+	glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, winWidth, winHeight, 0);
+
 
 }
 
@@ -545,6 +572,8 @@ void SetUpTextureMaps(std::string execPath)
 		// WRITE YOUR CODE HERE.
 		//****************************
 
+
+	// todo deal with this later
 	glGenTextures(1, &reflectionTexObj);
 	glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -555,7 +584,7 @@ void SetUpTextureMaps(std::string execPath)
 	//gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, imageWidth, imageHeight,
 	//	GL_RGB, GL_UNSIGNED_BYTE, imageData);
 
-	//DeallocateImageData(&imageData);
+	DeallocateImageData(&imageData);
 
 }
 
@@ -929,14 +958,15 @@ void DrawTable(void)
 	//****************************
 	// WRITE YOUR CODE HERE.
 	//****************************
+	glBindTexture(GL_TEXTURE_2D, reflectionTexObj); // Texture object ID.
 
 	// Bottom.
 	glNormal3f(0.0, 0.0, 1.0); // Normal vector.
-	SubdivideAndDrawQuad(24, 24,
-		0.0, 0.0, TABLETOP_X1, TABLETOP_Y2, TABLETOP_Z,
-		1.0, 0.0, TABLETOP_X1, TABLETOP_Y1, TABLETOP_Z,
-		1.0, 1.0, TABLETOP_X2, TABLETOP_Y1, TABLETOP_Z,
-		0.0, 1.0, TABLETOP_X2, TABLETOP_Y2, TABLETOP_Z);
+	SubdivideAndDrawQuad(24, 24, 
+		0.0, 0.0, TABLETOP_X1, TABLETOP_Y1, TABLETOP_Z,
+		1.0, 0.0, TABLETOP_X1, TABLETOP_Y2, TABLETOP_Z,
+		1.0, 1.0, TABLETOP_X2, TABLETOP_Y2, TABLETOP_Z,
+		0.0, 1.0, TABLETOP_X2, TABLETOP_Y1, TABLETOP_Z);
 
 	// Sides.
 
