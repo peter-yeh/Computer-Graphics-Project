@@ -169,10 +169,9 @@ void MakeReflectionImage(void)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	//glFrustum(TABLETOP_Y1 - eyePos[1], TABLETOP_Y2 - eyePos[1],
-	//	TABLETOP_X1 - eyePos[0], TABLETOP_X2 - eyePos[0],
-	//	eyePos[2] - TABLETOP_Z, eyeDistance + SCENE_RADIUS);
-	gluPerspective(45.0, (double)winWidth / winHeight, EYE_MIN_DIST + SCENE_RADIUS, eyeDistance);
+	glFrustum(TABLETOP_Y1 - eyePos[1], TABLETOP_Y2 - eyePos[1],
+		TABLETOP_X1 - eyePos[0], TABLETOP_X2 - eyePos[0],
+		eyePos[2] - TABLETOP_Z, eyeDistance + SCENE_RADIUS);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -572,16 +571,14 @@ void SetUpTextureMaps(std::string execPath)
 		//****************************
 
 
-	// todo deal with this later
 	glGenTextures(1, &reflectionTexObj);
 	glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 
-	//gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, imageWidth, imageHeight,
-	//	GL_RGB, GL_UNSIGNED_BYTE, imageData);
 
 	DeallocateImageData(&imageData);
 
