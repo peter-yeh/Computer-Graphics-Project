@@ -169,15 +169,14 @@ void MakeReflectionImage(void)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(TABLETOP_Y1 - eyePos[1], TABLETOP_Y2 - eyePos[1],
-		TABLETOP_X1 - eyePos[0], TABLETOP_X2 - eyePos[0],
-		eyePos[2] - TABLETOP_Z, eyeDistance + SCENE_RADIUS);
+	//glFrustum(TABLETOP_Y1 - eyePos[1], TABLETOP_Y2 - eyePos[1],
+	//	TABLETOP_X1 - eyePos[0], TABLETOP_X2 - eyePos[0],
+	//	eyePos[2] - TABLETOP_Z, eyeDistance + SCENE_RADIUS);
+	gluPerspective(45.0, (double)winWidth / winHeight, EYE_MIN_DIST + SCENE_RADIUS, eyeDistance);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(eyePos[0], eyePos[1], 2 * TABLETOP_Z - eyePos[2],
-		eyePos[0], eyePos[1], eyePos[2],
-		1, 0, 0);
+	gluLookAt(eyePos[0], eyePos[1], 2 * TABLETOP_Z - eyePos[2], eyePos[0], eyePos[1], eyePos[2], 1, 0, 0);
 
 	glLightfv(GL_LIGHT0, GL_POSITION, light0Position);
 	glLightfv(GL_LIGHT1, GL_POSITION, light1Position);
@@ -962,7 +961,7 @@ void DrawTable(void)
 
 	// Bottom.
 	glNormal3f(0.0, 0.0, 1.0); // Normal vector.
-	SubdivideAndDrawQuad(24, 24, 
+	SubdivideAndDrawQuad(24, 24,
 		0.0, 0.0, TABLETOP_X1, TABLETOP_Y1, TABLETOP_Z,
 		1.0, 0.0, TABLETOP_X1, TABLETOP_Y2, TABLETOP_Z,
 		1.0, 1.0, TABLETOP_X2, TABLETOP_Y2, TABLETOP_Z,
