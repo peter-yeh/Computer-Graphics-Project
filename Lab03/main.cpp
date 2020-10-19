@@ -545,6 +545,17 @@ void SetUpTextureMaps(std::string execPath)
 		// WRITE YOUR CODE HERE.
 		//****************************
 
+	glGenTextures(1, &reflectionTexObj);
+	glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	//gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, imageWidth, imageHeight,
+	//	GL_RGB, GL_UNSIGNED_BYTE, imageData);
+
+	//DeallocateImageData(&imageData);
 
 }
 
@@ -891,6 +902,7 @@ void DrawSphere(void)
 void DrawTable(void)
 {
 	// Tabletop.
+	glDisable(GL_CULL_FACE);   // Disable back-face culling.
 
 	GLfloat matAmbient1[] = { 0.5, 0.7, 1.0, 1.0 };
 	GLfloat matDiffuse1[] = { 0.5, 0.7, 1.0, 1.0 };
@@ -1010,4 +1022,7 @@ void DrawTable(void)
 	glTranslated(0.0, 0.0, 0.5);
 	glutSolidCube(1.0);
 	glPopMatrix();
+
+	glEnable(GL_CULL_FACE);   // Enable back-face culling.
+
 }
