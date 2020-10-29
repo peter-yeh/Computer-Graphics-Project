@@ -89,6 +89,8 @@ const char ceilingTexFile[] = "images/ceiling.jpg";
 const char brickTexFile[] = "images/brick.jpg";
 const char checkerTexFile[] = "images/checker.png";
 const char spotsTexFile[] = "images/spots.png";
+const char laptopSkinTexFile[] = "images/laptopSkin.jpg";
+const char keyboardTexFile[] = "images/keyboard.jpg";
 
 
 
@@ -122,6 +124,8 @@ GLuint ceilingTexObj;
 GLuint brickTexObj;
 GLuint checkerTexObj;
 GLuint spotsTexObj;
+GLuint laptopSkinTexObj;
+GLuint keyboardTexObj;
 
 // Others.
 bool drawAxes = true;           // Draw world coordinate frame axes iff true.
@@ -135,8 +139,8 @@ void DrawRoom(void);
 void DrawTeapot(void);
 void DrawSphere(void);
 void DrawTable(void);
-
-
+void DrawBase(void);
+void DrawScreen(void);
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -183,6 +187,8 @@ void MakeReflectionImage(void)
 	DrawRoom();
 	DrawTeapot();
 	DrawSphere();
+	DrawBase();
+	DrawScreen();
 
 	glReadBuffer(GL_BACK);
 	glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
@@ -192,8 +198,6 @@ void MakeReflectionImage(void)
 
 
 }
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -237,17 +241,16 @@ void MyDisplay(void)
 	DrawTeapot();
 	DrawSphere();
 	DrawTable();
+	DrawBase();
+	DrawScreen();
 
 	glutSwapBuffers();
 }
 
 
-
-
 /////////////////////////////////////////////////////////////////////////////
 // The keyboard callback function.
 /////////////////////////////////////////////////////////////////////////////
-
 void MyKeyboard(unsigned char key, int x, int y)
 {
 	switch (key)
@@ -294,13 +297,9 @@ void MyKeyboard(unsigned char key, int x, int y)
 	}
 }
 
-
-
-
 /////////////////////////////////////////////////////////////////////////////
 // The special key callback function.
 /////////////////////////////////////////////////////////////////////////////
-
 void MySpecialKey(int key, int x, int y)
 {
 	int modi = glutGetModifiers();
@@ -348,13 +347,9 @@ void MySpecialKey(int key, int x, int y)
 	}
 }
 
-
-
-
 /////////////////////////////////////////////////////////////////////////////
 // The reshape callback function.
 /////////////////////////////////////////////////////////////////////////////
-
 void MyReshape(int w, int h)
 {
 	winWidth = w;
@@ -362,13 +357,9 @@ void MyReshape(int w, int h)
 	glViewport(0, 0, w, h);
 }
 
-
-
-
 /////////////////////////////////////////////////////////////////////////////
 // Initialize some OpenGL states.
 /////////////////////////////////////////////////////////////////////////////
-
 void GLInit(void)
 {
 	glClearColor(0.0, 0.0, 0.0, 1.0); // Set black background color.
@@ -418,13 +409,9 @@ void GLInit(void)
 	glEnable(GL_NORMALIZE);
 }
 
-
-
-
 /////////////////////////////////////////////////////////////////////////////
 // Set up texture maps.
 /////////////////////////////////////////////////////////////////////////////
-
 void SetUpTextureMaps(std::string execPath)
 {
 	unsigned char* imageData = NULL;
@@ -438,6 +425,8 @@ void SetUpTextureMaps(std::string execPath)
 	std::string brickPath = execPath + "/" + std::string(brickTexFile);
 	std::string checkerPath = execPath + "/" + std::string(checkerTexFile);
 	std::string spotsPath = execPath + "/" + std::string(spotsTexFile);
+	std::string laptopSkinPath = execPath + "/" + std::string(laptopSkinTexFile);
+	std::string keyboardPath = execPath + "/" + std::string(keyboardTexFile);
 
 	// This texture object is for the wood texture map.
 
@@ -579,6 +568,51 @@ void SetUpTextureMaps(std::string execPath)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 
+	DeallocateImageData(&imageData);
+
+
+	// This texture object is for the laptop skin texture map.
+
+	glGenTextures(1, &laptopSkinTexObj);
+	glBindTexture(GL_TEXTURE_2D, laptopSkinTexObj);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	if (ReadImageFile(laptopSkinPath.data(), &imageData,
+		&imageWidth, &imageHeight, &numComponents) == 0) exit(1);
+	if (numComponents != 3)
+	{
+		fprintf(stderr, "Error: Texture image is not in RGB format.\n");
+		exit(1);
+	}
+
+	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, imageWidth, imageHeight,
+		GL_RGB, GL_UNSIGNED_BYTE, imageData);
+
+	DeallocateImageData(&imageData);
+
+
+	// This texture object is for the keyboard texture map.
+
+	glGenTextures(1, &keyboardTexObj);
+	glBindTexture(GL_TEXTURE_2D, keyboardTexObj);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	if (ReadImageFile(keyboardPath.data(), &imageData,
+		&imageWidth, &imageHeight, &numComponents) == 0) exit(1);
+	if (numComponents != 3)
+	{
+		fprintf(stderr, "Error: Texture image is not in RGB format.\n");
+		exit(1);
+	}
+
+	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, imageWidth, imageHeight,
+		GL_RGB, GL_UNSIGNED_BYTE, imageData);
 
 	DeallocateImageData(&imageData);
 
@@ -660,19 +694,16 @@ int main(int argc, char** argv)
 
 
 
-
 //============================================================================
 //============================================================================
 // Functions below are for modeling the 3D objects.
 //============================================================================
 //============================================================================
 
-
 /////////////////////////////////////////////////////////////////////////////
 // Draw the x, y, z axes. Each is drawn with the input length.
 // The x-axis is red, y-axis green, and z-axis blue.
 /////////////////////////////////////////////////////////////////////////////
-
 void DrawAxes(double length)
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -695,8 +726,6 @@ void DrawAxes(double length)
 	glEnd();
 	glPopAttrib();
 }
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -878,7 +907,7 @@ void DrawTeapot(void)
 	glDisable(GL_CULL_FACE);  // Disable back-face culling.
 
 	glPushMatrix();
-	glTranslated(-0.3, -0.5, size * 0.75 + TABLETOP_Z);
+	glTranslated(-0.6, -0.2, size * 0.75 + TABLETOP_Z);
 	glRotated(90.0, 0.0, 0.0, 1.0);
 	glRotated(90.0, 1.0, 0.0, 0.0);
 	glutSolidTeapot(size); // This function also generates texture coordinates on the teapot.
@@ -956,7 +985,7 @@ void DrawTable(void)
 	//****************************
 	glBindTexture(GL_TEXTURE_2D, reflectionTexObj); // Texture object ID.
 
-	// Bottom.
+	// Top.
 	glNormal3f(0.0, 0.0, 1.0); // Normal vector.
 	SubdivideAndDrawQuad(24, 24,
 		0.0, 0.0, TABLETOP_X1, TABLETOP_Y1, TABLETOP_Z,
@@ -1051,4 +1080,176 @@ void DrawTable(void)
 
 	glEnable(GL_CULL_FACE);   // Enable back-face culling.
 
+}
+
+
+#define LAPTOP_BREATH .45
+#define LAPTOP_LENGTH .7
+#define LAPTOP_THICKNESS 0.02
+
+#define LAPTOP_X1 0
+#define LAPTOP_X2 LAPTOP_X1 + LAPTOP_BREATH
+#define LAPTOP_Y1 -1.3
+#define LAPTOP_Y2 LAPTOP_Y1 + LAPTOP_LENGTH
+#define LAPTOP_Z  1.25
+
+
+void DrawBase(void)
+{
+	glDisable(GL_CULL_FACE);   // Disable back-face culling.
+	//GLfloat matAmbient[] = { 0.2, 0.3, 0.4, 1.0 };
+	//GLfloat matDiffuse[] = { 0.2, 0.3, 0.4, 1.0 };
+	//GLfloat matSpecular[] = { 0.6, 0.8, 1.0, 1.0 };
+	//GLfloat matShininess[] = { 128.0 };
+
+	GLfloat matAmbient[] = { 1, 1, 1, 1};
+	GLfloat matDiffuse[] = { 1, 1, 1, 1};
+	GLfloat matSpecular[] = { 1, 1, 1, 1};
+	GLfloat matShininess[] = { 0 };
+
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShininess);
+
+	glBindTexture(GL_TEXTURE_2D, keyboardTexObj);
+
+	// Top.
+	glNormal3f(0.0, 0.0, 1.0); // Normal vector.
+	SubdivideAndDrawQuad(24, 24,
+		0.0, 0.0, LAPTOP_X1, LAPTOP_Y1, LAPTOP_Z,
+		1.0, 0.0, LAPTOP_X1, LAPTOP_Y2, LAPTOP_Z,
+		1.0, 1.0, LAPTOP_X2, LAPTOP_Y2, LAPTOP_Z,
+		0.0, 1.0, LAPTOP_X2, LAPTOP_Y1, LAPTOP_Z);
+
+	GLfloat matAmbient2[] = { 1, 1, 1, 1 };
+	GLfloat matDiffuse2[] = { 1, 1, 1, 1};
+	GLfloat matSpecular2[] = { 1, 1, 1, 1};
+	GLfloat matShininess2[] = { 64 };
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient2);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse2);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular2);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShininess2);
+
+	glBindTexture(GL_TEXTURE_2D, 0); // Texture object ID == 0 means no texture mapping.
+
+	// Sides.
+	// In +y direction.
+	glNormal3f(0.0, 1.0, 0.0); // Normal vector.
+	SubdivideAndDrawQuad(24, 2, 0.0, 0.0, LAPTOP_X2, LAPTOP_Y2, LAPTOP_Z - LAPTOP_THICKNESS,
+		1.0, 0.0, LAPTOP_X1, LAPTOP_Y2, LAPTOP_Z - LAPTOP_THICKNESS,
+		1.0, 1.0, LAPTOP_X1, LAPTOP_Y2, LAPTOP_Z,
+		0.0, 1.0, LAPTOP_X2, LAPTOP_Y2, LAPTOP_Z);
+	// In -y direction.
+	glNormal3f(0.0, -1.0, 0.0); // Normal vector.
+	SubdivideAndDrawQuad(24, 2, 0.0, 0.0, LAPTOP_X1, LAPTOP_Y1, LAPTOP_Z - LAPTOP_THICKNESS,
+		1.0, 0.0, LAPTOP_X2, LAPTOP_Y1, LAPTOP_Z - LAPTOP_THICKNESS,
+		1.0, 1.0, LAPTOP_X2, LAPTOP_Y1, LAPTOP_Z,
+		0.0, 1.0, LAPTOP_X1, LAPTOP_Y1, LAPTOP_Z);
+	// In +x direction.
+	glNormal3f(1.0, 0.0, 0.0); // Normal vector.
+	SubdivideAndDrawQuad(24, 2, 0.0, 0.0, LAPTOP_X2, LAPTOP_Y1, LAPTOP_Z - LAPTOP_THICKNESS,
+		1.0, 0.0, LAPTOP_X2, LAPTOP_Y2, LAPTOP_Z - LAPTOP_THICKNESS,
+		1.0, 1.0, LAPTOP_X2, LAPTOP_Y2, LAPTOP_Z,
+		0.0, 1.0, LAPTOP_X2, LAPTOP_Y1, LAPTOP_Z);
+	// In -x direction.
+	glNormal3f(-1.0, 0.0, 0.0); // Normal vector.
+	SubdivideAndDrawQuad(24, 2, 0.0, 0.0, LAPTOP_X1, LAPTOP_Y2, LAPTOP_Z - LAPTOP_THICKNESS,
+		1.0, 0.0, LAPTOP_X1, LAPTOP_Y1, LAPTOP_Z - LAPTOP_THICKNESS,
+		1.0, 1.0, LAPTOP_X1, LAPTOP_Y1, LAPTOP_Z,
+		0.0, 1.0, LAPTOP_X1, LAPTOP_Y2, LAPTOP_Z);
+
+	// Bottom.
+	glNormal3f(0.0, 0.0, -1.0); // Normal vector.
+	SubdivideAndDrawQuad(24, 24, 0.0, 0.0, LAPTOP_X1, LAPTOP_Y1, LAPTOP_Z - LAPTOP_THICKNESS,
+		1.0, 0.0, LAPTOP_X1, LAPTOP_Y2, LAPTOP_Z - LAPTOP_THICKNESS,
+		1.0, 1.0, LAPTOP_X2, LAPTOP_Y2, LAPTOP_Z - LAPTOP_THICKNESS,
+		0.0, 1.0, LAPTOP_X2, LAPTOP_Y1, LAPTOP_Z - LAPTOP_THICKNESS);
+
+
+	glEnable(GL_CULL_FACE);   // Enable back-face culling.
+
+}
+
+#define SCREEN_X1 0
+#define SCREEN_X2 SCREEN_X1 + LAPTOP_BREATH
+#define SCREEN_Y1 -1.3
+#define SCREEN_Y2 SCREEN_Y1 + LAPTOP_LENGTH
+#define SCREEN_Z  1.25
+
+
+void DrawScreen(void) {
+
+	glDisable(GL_CULL_FACE);   // Disable back-face culling.
+
+	GLfloat matAmbient[] = { 1, 1, 1, 1 };
+	GLfloat matDiffuse[] = { 1, 1, 1, 1 };
+	GLfloat matSpecular[] = { 1, 1, 1, 1 };
+	GLfloat matShininess[] = { 128.0 };
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShininess);
+	glBindTexture(GL_TEXTURE_2D, 0); // Texture object ID == 0 means no texture mapping.
+	glPushMatrix();
+	glRotated(45, 0, -1, 0);
+
+	// Top.
+	glNormal3f(0.0, 0.0, 1.0); // Normal vector.
+	SubdivideAndDrawQuad(24, 24,
+		0.0, 0.0, SCREEN_X1, SCREEN_Y1, SCREEN_Z,
+		1.0, 0.0, SCREEN_X1, SCREEN_Y2, SCREEN_Z,
+		1.0, 1.0, SCREEN_X2, SCREEN_Y2, SCREEN_Z,
+		0.0, 1.0, SCREEN_X2, SCREEN_Y1, SCREEN_Z);
+
+	// Sides.
+	// In +y direction.
+	glNormal3f(0.0, 1.0, 0.0); // Normal vector.
+	SubdivideAndDrawQuad(24, 2, 0.0, 0.0, SCREEN_X2, SCREEN_Y2, SCREEN_Z - LAPTOP_THICKNESS,
+		1.0, 0.0, SCREEN_X1, SCREEN_Y2, SCREEN_Z - LAPTOP_THICKNESS,
+		1.0, 1.0, SCREEN_X1, SCREEN_Y2, SCREEN_Z,
+		0.0, 1.0, SCREEN_X2, SCREEN_Y2, SCREEN_Z);
+	// In -y direction.
+	glNormal3f(0.0, -1.0, 0.0); // Normal vector.
+	SubdivideAndDrawQuad(24, 2, 0.0, 0.0, SCREEN_X1, SCREEN_Y1, SCREEN_Z - LAPTOP_THICKNESS,
+		1.0, 0.0, SCREEN_X2, SCREEN_Y1, SCREEN_Z - LAPTOP_THICKNESS,
+		1.0, 1.0, SCREEN_X2, SCREEN_Y1, SCREEN_Z,
+		0.0, 1.0, SCREEN_X1, SCREEN_Y1, SCREEN_Z);
+	// In +x direction.
+	glNormal3f(1.0, 0.0, 0.0); // Normal vector.
+	SubdivideAndDrawQuad(24, 2, 0.0, 0.0, SCREEN_X2, SCREEN_Y1, SCREEN_Z - LAPTOP_THICKNESS,
+		1.0, 0.0, SCREEN_X2, SCREEN_Y2, SCREEN_Z - LAPTOP_THICKNESS,
+		1.0, 1.0, SCREEN_X2, SCREEN_Y2, SCREEN_Z,
+		0.0, 1.0, SCREEN_X2, SCREEN_Y1, SCREEN_Z);
+	// In -x direction.
+	glNormal3f(-1.0, 0.0, 0.0); // Normal vector.
+	SubdivideAndDrawQuad(24, 2, 0.0, 0.0, SCREEN_X1, SCREEN_Y2, SCREEN_Z - LAPTOP_THICKNESS,
+		1.0, 0.0, SCREEN_X1, SCREEN_Y1, SCREEN_Z - LAPTOP_THICKNESS,
+		1.0, 1.0, SCREEN_X1, SCREEN_Y1, SCREEN_Z,
+		0.0, 1.0, SCREEN_X1, SCREEN_Y2, SCREEN_Z);
+
+
+
+
+
+	GLfloat matAmbient2[] = { 1, 1, 1, 1 };
+	GLfloat matDiffuse2[] = { 1, 1, 1, 1 };
+	GLfloat matSpecular2[] = { 1, 1, 1, 1 };
+	GLfloat matShininess2[] = { 64 };
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient2);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse2);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular2);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShininess2);
+	glBindTexture(GL_TEXTURE_2D, laptopSkinTexObj); // Texture object ID == 0 means no texture mapping.
+
+	// Bottom.
+	glNormal3f(0.0, 0.0, -1.0); // Normal vector.
+	SubdivideAndDrawQuad(24, 24, 0.0, 0.0, SCREEN_X1, SCREEN_Y1, SCREEN_Z - LAPTOP_THICKNESS,
+		1.0, 0.0, SCREEN_X1, SCREEN_Y2, SCREEN_Z - LAPTOP_THICKNESS,
+		1.0, 1.0, SCREEN_X2, SCREEN_Y2, SCREEN_Z - LAPTOP_THICKNESS,
+		0.0, 1.0, SCREEN_X2, SCREEN_Y1, SCREEN_Z - LAPTOP_THICKNESS);
+
+	glPopMatrix();
+
+	glEnable(GL_CULL_FACE);   // Enable back-face culling.
 }
