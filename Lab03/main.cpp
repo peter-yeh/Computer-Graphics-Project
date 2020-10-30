@@ -1,10 +1,14 @@
-//============================================================
-// STUDENT NAME:
-// STUDENT NO.:
-// NUS EMAIL ADDRESS:
-// COMMENTS TO GRADER:
-//
-// ============================================================
+// I created a hovering laptop above the tabletop.
+// It was intentionally not placed on the table so the tabletop
+// could have relfection of the laptop. The position of teapot is 
+// slightly adjusted to make space for my laptop.
+// This is by far the most time consuming lab for this module.
+// I have ran this exe standalone with the images and it's working fine.
+// Please do contact me if the images are not working thanks!
+// Hope you like it!
+// 
+// Also, this is written and tested on Window os.
+// Images folder should contain laptopSkin.jpg and keyboard.jpg
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -595,7 +599,6 @@ void SetUpTextureMaps(std::string execPath)
 
 
 	// This texture object is for the keyboard texture map.
-
 	glGenTextures(1, &keyboardTexObj);
 	glBindTexture(GL_TEXTURE_2D, keyboardTexObj);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -1097,14 +1100,9 @@ void DrawTable(void)
 void DrawBase(void)
 {
 	glDisable(GL_CULL_FACE);   // Disable back-face culling.
-	//GLfloat matAmbient[] = { 0.2, 0.3, 0.4, 1.0 };
-	//GLfloat matDiffuse[] = { 0.2, 0.3, 0.4, 1.0 };
-	//GLfloat matSpecular[] = { 0.6, 0.8, 1.0, 1.0 };
-	//GLfloat matShininess[] = { 128.0 };
-
-	GLfloat matAmbient[] = { 1, 1, 1, 1};
-	GLfloat matDiffuse[] = { 1, 1, 1, 1};
-	GLfloat matSpecular[] = { 1, 1, 1, 1};
+	GLfloat matAmbient[] = { 1, 1, 1, 1 };
+	GLfloat matDiffuse[] = { 1, 1, 1, 1 };
+	GLfloat matSpecular[] = { 1, 1, 1, 1 };
 	GLfloat matShininess[] = { 0 };
 
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient);
@@ -1123,8 +1121,8 @@ void DrawBase(void)
 		0.0, 1.0, LAPTOP_X2, LAPTOP_Y1, LAPTOP_Z);
 
 	GLfloat matAmbient2[] = { 1, 1, 1, 1 };
-	GLfloat matDiffuse2[] = { 1, 1, 1, 1};
-	GLfloat matSpecular2[] = { 1, 1, 1, 1};
+	GLfloat matDiffuse2[] = { 1, 1, 1, 1 };
+	GLfloat matSpecular2[] = { 1, 1, 1, 1 };
 	GLfloat matShininess2[] = { 64 };
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient2);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse2);
@@ -1173,26 +1171,28 @@ void DrawBase(void)
 
 #define SCREEN_X1 0
 #define SCREEN_X2 SCREEN_X1 + LAPTOP_BREATH
-#define SCREEN_Y1 -1.3
+#define SCREEN_Y1 0
 #define SCREEN_Y2 SCREEN_Y1 + LAPTOP_LENGTH
-#define SCREEN_Z  1.25
+#define SCREEN_Z  0
 
 
 void DrawScreen(void) {
 
 	glDisable(GL_CULL_FACE);   // Disable back-face culling.
 
+	// back of laptop
 	GLfloat matAmbient[] = { 1, 1, 1, 1 };
 	GLfloat matDiffuse[] = { 1, 1, 1, 1 };
 	GLfloat matSpecular[] = { 1, 1, 1, 1 };
-	GLfloat matShininess[] = { 128.0 };
+	GLfloat matShininess[] = { 64 };
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShininess);
-	glBindTexture(GL_TEXTURE_2D, 0); // Texture object ID == 0 means no texture mapping.
-	glPushMatrix();
-	glRotated(45, 0, -1, 0);
+	glBindTexture(GL_TEXTURE_2D, laptopSkinTexObj);
+
+	glRotated(95, 0, -1, 0);
+	glTranslated(1.23, -1.3, -0.107);
 
 	// Top.
 	glNormal3f(0.0, 0.0, 1.0); // Normal vector.
@@ -1201,6 +1201,17 @@ void DrawScreen(void) {
 		1.0, 0.0, SCREEN_X1, SCREEN_Y2, SCREEN_Z,
 		1.0, 1.0, SCREEN_X2, SCREEN_Y2, SCREEN_Z,
 		0.0, 1.0, SCREEN_X2, SCREEN_Y1, SCREEN_Z);
+
+	// colour of sides are white
+	GLfloat matAmbient2[] = { 1, 1, 1, 1 };
+	GLfloat matDiffuse2[] = { 1, 1, 1, 1 };
+	GLfloat matSpecular2[] = { 1, 1, 1, 1 };
+	GLfloat matShininess2[] = { 128.0 };
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient2);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse2);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular2);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShininess2);
+	glBindTexture(GL_TEXTURE_2D, 0); // Texture object ID == 0 means no texture mapping.
 
 	// Sides.
 	// In +y direction.
@@ -1228,19 +1239,16 @@ void DrawScreen(void) {
 		1.0, 1.0, SCREEN_X1, SCREEN_Y1, SCREEN_Z,
 		0.0, 1.0, SCREEN_X1, SCREEN_Y2, SCREEN_Z);
 
-
-
-
-
-	GLfloat matAmbient2[] = { 1, 1, 1, 1 };
-	GLfloat matDiffuse2[] = { 1, 1, 1, 1 };
-	GLfloat matSpecular2[] = { 1, 1, 1, 1 };
-	GLfloat matShininess2[] = { 64 };
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient2);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse2);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular2);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShininess2);
-	glBindTexture(GL_TEXTURE_2D, laptopSkinTexObj); // Texture object ID == 0 means no texture mapping.
+	// Screen of laptop
+	GLfloat matAmbient3[] = { 0, 0, 0, 1 };
+	GLfloat matDiffuse3[] = { 0, 0, 0, 1 };
+	GLfloat matSpecular3[] = { 0, 0, 0, 1 };
+	GLfloat matShininess3[] = { 256 };
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient3);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse3);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular3);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShininess3);
+	glBindTexture(GL_TEXTURE_2D, reflectionTexObj); // Texture object ID == 0 means no texture mapping.
 
 	// Bottom.
 	glNormal3f(0.0, 0.0, -1.0); // Normal vector.
@@ -1248,8 +1256,6 @@ void DrawScreen(void) {
 		1.0, 0.0, SCREEN_X1, SCREEN_Y2, SCREEN_Z - LAPTOP_THICKNESS,
 		1.0, 1.0, SCREEN_X2, SCREEN_Y2, SCREEN_Z - LAPTOP_THICKNESS,
 		0.0, 1.0, SCREEN_X2, SCREEN_Y1, SCREEN_Z - LAPTOP_THICKNESS);
-
-	glPopMatrix();
 
 	glEnable(GL_CULL_FACE);   // Enable back-face culling.
 }
