@@ -1,11 +1,3 @@
-//============================================================
-// STUDENT NAME: 
-// STUDENT NO.: 
-// NUS EMAIL ADDRESS: 
-// COMMENTS TO GRADER: 
-// 
-// ============================================================
-
 #include <cmath>
 #include "Sphere.h"
 

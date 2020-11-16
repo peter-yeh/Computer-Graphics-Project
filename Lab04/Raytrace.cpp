@@ -1,11 +1,3 @@
-//============================================================
-// STUDENT NAME: 
-// STUDENT NO.: 
-// NUS EMAIL ADDRESS: 
-// COMMENTS TO GRADER: 
-// 
-// ============================================================
-
 #include <cmath>#include <cfloat>
 #include "Vector3d.h"
 #include "Color.h"
@@ -130,13 +122,10 @@ Color Raytrace::TraceRay(const Ray& ray, const Scene& scene, int reflectLevels, 
 
 		if (hasShadow) {
 			Ray rayTowardsLight = Ray(nearestHitRec.p, directionToLight);
-
 			Vector3d dir = rayTowardsLight.direction();
 			double largestDirection = 0;
 
-			for (int i = 0; i < 2; i++)
-				if (dir[i] > largestDirection) 
-					largestDirection = dir[i];
+			for (int i = 0; i < 2; i++) if (dir[i] > dir[largestDirection]) largestDirection = dir[i];
 
 			double tMax = (scene.ptLight[i].position[largestDirection] - rayTowardsLight.origin()[largestDirection]) / dir[largestDirection];
 
@@ -149,8 +138,8 @@ Color Raytrace::TraceRay(const Ray& ray, const Scene& scene, int reflectLevels, 
 			}
 		}
 
-
 		if (isToLight) result += computePhongLighting(directionToLight, N, V, *nearestHitRec.mat_ptr, scene.ptLight[i]);
+
 	}
 
 
